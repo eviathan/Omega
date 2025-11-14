@@ -1,15 +1,36 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug",
-            "type": "dotnet",
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
+            "name": "CLI",
+            "type": "coreclr",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/Omega.Application/Omega.Application.csproj"
-        }
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Omega.Game/bin/Debug/net9.0/Omega.Game.dll",
+            "args": ["--vscode"],
+            "cwd": "${workspaceFolder}",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "logging": {
+                "moduleLoad": false,
+                "diagnosticsLog": {
+                    "protocolMessages": false
+                },
+                "exceptionLogging": "none",
+                "trace": false,
+                "programOutput": true
+            }
 
+        },
+        {
+            "name": "Attach To Process",
+            "type": "coreclr",
+            "request": "attach"
+        }
     ]
 }

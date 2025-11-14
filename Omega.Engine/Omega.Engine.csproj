@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\Omega.Core\Omega.Core.csproj" />
+    <ProjectReference Include="..\Omega.Renderer.Graphics\Omega.Renderer.Graphics.csproj" />
+    <ProjectReference Include="..\Omega.Renderer.Text\Omega.Renderer.Text.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
