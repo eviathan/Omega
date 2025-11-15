@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Omega.Engine.Extensions;
+using Omega.Extensions;
+using Microsoft.Extensions.Logging;
+using Omega.Renderer.Text;
 
 namespace Omega.Game
 {
@@ -8,9 +10,13 @@ namespace Omega.Game
         static void Main(string[] args)
         {
             Host.CreateDefaultBuilder(args)
+                .ConfigureLogging(logging => logging.ClearProviders())
                 .ConfigureServices(services =>
                 {
-                    services.AddOmegaEngine();
+                    services.AddOmegaEngine((options) =>
+                    {
+                        options.SetRenderer<OmegaTextRenderer>();
+                    });
                 })
                 .Build()
                 .Run();

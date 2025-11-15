@@ -1,23 +1,33 @@
 using Microsoft.Extensions.DependencyInjection;
 using Omega.Core.Interfaces;
+using Omega.Engine;
 using Omega.Engine.Managers;
-using Omega.Renderer.Text;
+using Omega.Engine.Models;
+using Omega.Renderer.Graphics;
 
-namespace Omega.Engine.Extensions
+namespace Omega.Extensions
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddOmegaEngine(this IServiceCollection services)
+        public static IServiceCollection AddOmegaEngine(this IServiceCollection services, Action<OmegaOptions>? configure = null)
         {
+            // Configure Options
+            var options = new OmegaOptions();
+            configure?.Invoke(options);
+            
+            services.AddSingleton(options);
+            services.AddSingleton(typeof(IRenderer), options.RendererType);
+            
+            // Hosted Service
+            services.AddHostedService(provider => 
+                provider.GetRequiredService<OmegaEngine>()
+            );
+            
+            // Service Registrations 
             services.AddSingleton<OmegaEngine>();
-            services.AddSingleton<IInputManager, InputManager>();
-            services.AddSingleton<IRenderer, OmegaTextRenderer>();
-            services.AddSingleton<ISceneManager, SceneManager>();
-
             services.AddSingleton<GameLoop>();
-
-            // Add other services here as needed
-            services.AddHostedService<OmegaEngine>();
+            services.AddSingleton<IInputManager, InputManager>();
+            services.AddSingleton<ISceneManager, SceneManager>();
 
             return services;
         }

@@ -2,6 +2,6 @@ namespace Omega.Core.Interfaces
 {
     public interface ISceneManager
     {
-        Task InitialiseAsync();
+        Task InitialiseAsync(Action<float> updateProgress = null!);
     }
 }

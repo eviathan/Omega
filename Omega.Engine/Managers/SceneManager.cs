@@ -4,9 +4,16 @@ namespace Omega.Engine.Managers
 {
     public class SceneManager : ISceneManager
     {
-        public async Task InitialiseAsync()
+        public async Task InitialiseAsync(Action<float> updateProgress = null!)
         {
-            await Task.FromResult(0);
+            await Task.Delay(500);
+            updateProgress(0.2f);
+            
+            await Task.Delay(500);
+            updateProgress(0.5f);
+
+            await Task.Delay(300);
+            updateProgress(1f);
         }
     }
 }
