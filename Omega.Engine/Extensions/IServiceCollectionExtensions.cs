@@ -16,6 +16,8 @@ namespace Omega.Extensions
             configure?.Invoke(options);
             
             services.AddSingleton(options);
+            services.AddSingleton(typeof(ISceneManager), options.SceneManagerType);
+            services.AddSingleton(typeof(IInputManager), options.InputManagerType);
             services.AddSingleton(typeof(IRenderer), options.RendererType);
             
             // Hosted Service
