@@ -2,18 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
-            "name": "CLI",
+            "name": "Debug Omega.Game",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/Omega.Game/bin/Debug/net9.0/Omega.Game.dll",
-            "args": ["--vscode"],
-            "cwd": "${workspaceFolder}",
-            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "args": [
+                "--vscode"
+            ],
+            "cwd": "${workspaceFolder}/Omega.Game",
             "console": "internalConsole",
             "stopAtEntry": false,
             "logging": {
@@ -25,8 +22,8 @@
                 "trace": false,
                 "programOutput": true
             }
-
         },
+
         {
             "name": "Attach To Process",
             "type": "coreclr",

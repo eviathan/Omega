@@ -1,0 +1,14 @@
+{
+    "label": "build",
+    "command": "dotnet",
+    "type": "process",
+    "args": [
+            "build",
+            "${workspaceFolder}/Omega.Game/Omega.Game.csproj",
+            "--configuration",
+            "Debug",
+            "/t:Clean;Build"
+        ],
+        "problemMatcher": "$msCompile",
+        "group": "build"
+}

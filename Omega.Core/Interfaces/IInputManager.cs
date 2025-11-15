@@ -1,6 +1,6 @@
 namespace Omega.Core.Interfaces
 {
-    public interface IRenderer
+    public interface IInputManager
     {
         Task InitialiseAsync();
     }

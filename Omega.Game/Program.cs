@@ -1,4 +1,5 @@
-﻿using Omega.Engine;
+﻿using Microsoft.Extensions.Hosting;
+using Omega.Engine.Extensions;
 
 namespace Omega.Game
 {
@@ -6,18 +7,13 @@ namespace Omega.Game
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting Omega Engine...");
-
-            // // Initialize subsystems (optional)
-            // InputManager.Initialize();
-            // Renderer2D.Initialize();
-            // SceneManager.Initialize();
-
-            // // Create and run the game loop
-            // GameLoop gameLoop = new GameLoop();
-            // gameLoop.Run();
-
-            Console.WriteLine("Exiting Omega Engine...");
-        }
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices(services =>
+                {
+                    services.AddOmegaEngine();
+                })
+                .Build()
+                .Run();
+        }        
     }
 }
