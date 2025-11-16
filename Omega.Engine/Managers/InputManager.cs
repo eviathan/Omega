@@ -4,9 +4,18 @@ namespace Omega.Engine.Managers
 {
     public class InputManager : IInputManager
     {
-        public async Task InitialiseAsync()
+        public void Initialise(Action<float> updateProgress = null!)
         {
-            await Task.FromResult(0);
+        }
+
+        public void RegisterKeyEvent(ConsoleKey key, Action action)
+        {
+           
+        }
+
+        public void Update()
+        {
+           
         }
     }
 }

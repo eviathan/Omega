@@ -1,4 +1,5 @@
 using Omega.Core.Interfaces;
+using Omega.Core.Models;
 using Omega.Engine.Managers;
 using Omega.Renderer.Graphics;
 
@@ -8,7 +9,9 @@ namespace Omega.Engine.Models
     {
         public Type SceneManagerType { get; private set; }
         public Type InputManagerType { get; private set; }
+
         public Type RendererType { get; private set; }
+        public RendererOptions RendererOptions { get; private set; } = new();
 
         public OmegaOptions()
         {
@@ -29,10 +32,13 @@ namespace Omega.Engine.Models
             InputManagerType = typeof(TInputManager);
         }
 
-        public void SetRenderer<TRenderer>()
+        public void SetRenderer<TRenderer>(Action<RendererOptions>? action = null)
             where TRenderer : IRenderer
         {
             RendererType = typeof(TRenderer);
+
+            RendererOptions = new RendererOptions();
+            action?.Invoke(RendererOptions);
         }
     }
 }

@@ -2,6 +2,9 @@ namespace Omega.Core.Interfaces
 {
     public interface IRenderer
     {
-        Task InitialiseAsync();
+        void Initialise(Action<float> updateProgress = null!);
+
+        void Start();
+        void Draw();
     }
 }

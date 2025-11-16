@@ -1,80 +1,129 @@
 using Microsoft.Extensions.Hosting;
 using Omega.Core.Interfaces;
 using Spectre.Console;
+using System.Diagnostics;
 
 namespace Omega.Engine
 {
-    public class OmegaEngine : IHostedService
+    public class OmegaEngine
     {
-        private readonly GameLoop _gameLoop;
+        private const int TARGET_FPS = 60;
+    
+        private readonly IHostApplicationLifetime _appLifetime;
         private readonly ISceneManager _sceneManager;
         private readonly IInputManager _inputManager;
         private readonly IRenderer _renderer;
 
-        public OmegaEngine(GameLoop gameLoop, ISceneManager sceneManager, IInputManager inputManager, IRenderer renderer)
+        private bool _isRunning = true;
+
+        public OmegaEngine(
+            IHostApplicationLifetime appLifetime,
+            ISceneManager sceneManager,
+            IInputManager inputManager,
+            IRenderer renderer)
         {
-            _gameLoop = gameLoop ?? throw new ArgumentNullException(nameof(gameLoop));
-            _sceneManager = sceneManager ?? throw new ArgumentNullException(nameof(sceneManager));
-            _inputManager = inputManager ?? throw new ArgumentNullException(nameof(inputManager));
-            _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer));
+            _appLifetime = appLifetime;
+            _sceneManager = sceneManager;
+            _inputManager = inputManager;
+            _renderer = renderer;
+                        
+            _inputManager.RegisterKeyEvent(ConsoleKey.Q, () =>
+            {
+                _isRunning = false;
+            });
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public async Task RunAsync()
         {
-            LogBanner("𝝮 Omega Engine 𝝮");
+            LogBanner("𝝮 Omega Engine v0.0.1 𝝮");
+            Console.WriteLine("Press 'Q' to quit");
 
+            await InitialiseSubsystems();
+            await RunGameLoop();
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine();
+            LogBanner("👋 Goodbye! 👋");
+            _isRunning = false;
+            return Task.CompletedTask;
+        }
+
+        private async Task InitialiseSubsystems()
+        {
             await AnsiConsole.Progress()
                 .AutoClear(false)
-                .Columns(new ProgressColumn[]
-                {
+                .Columns(
+                [
                     new TaskDescriptionColumn(),
                     new ProgressBarColumn(),
                     new SpinnerColumn(),
-                })
-                .StartAsync(async ctx =>
+                ])
+                .Start(async ctx =>
                 {
-                    var sceneTask = ctx.AddTask("Initialising Scene Manager...");
-                    var inputTask = ctx.AddTask("Initialising Input Manager...");
+                    var sceneTask    = ctx.AddTask("Initialising Scene Manager...");
+                    var inputTask    = ctx.AddTask("Initialising Input Manager...");
                     var rendererTask = ctx.AddTask("Initialising Renderer...");
 
-                    var scene = Task.Run(async () =>
-                        await _sceneManager.InitialiseAsync((progress) =>
-                            sceneTask.Increment(progress * 100)
-                        )
+                    _sceneManager.Initialise(progress => 
+                        sceneTask.Increment(progress * 100)
                     );
 
-                    var input = Task.Run(async () =>
-                    {
-                        await _inputManager.InitialiseAsync();
-                        await Task.Delay(500);
-                        inputTask.Increment(100);
-                    });
+                    _inputManager.Initialise(progress => 
+                        inputTask.Increment(progress * 100)
+                    );
 
-                    var renderer = Task.Run(async () =>
-                    {
-                        await _renderer.InitialiseAsync();
-                        await Task.Delay(500);
-                        rendererTask.Increment(100);
-                    });
-
-                    await Task.WhenAll(scene, input, renderer);
+                    _renderer.Initialise(progress => 
+                        rendererTask.Increment(progress * 100)
+                    );
                 });
-
-
-            await Task.Run(() => 
-                _gameLoop.Run(),
-                cancellationToken
-            );
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        private async Task RunGameLoop()
         {
-            Console.WriteLine("");
-            LogBanner("👋 Goodbye! 👋");
-            await Task.FromResult(0);
+            AnsiConsole.MarkupLine("[bold green]Starting[/] [white]Engine![/]");
+
+            var stopwatch = new Stopwatch();
+            var frameTime = 1000.0 / TARGET_FPS;
+
+            _sceneManager.Start();
+            _renderer.Start();
+
+            while (_isRunning)
+            {
+                stopwatch.Restart();
+
+                // Input
+                _inputManager.Update();
+
+                // Update
+                _sceneManager.Update();
+
+                // Render
+                _renderer.Draw();
+
+                // FPS timing
+                var elapsed = stopwatch.ElapsedMilliseconds;
+                if (elapsed < frameTime)
+                {
+                    var delay = frameTime - elapsed;
+                    try
+                    {
+                        await Task.Delay((int)delay);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            _appLifetime.StopApplication();
+            AnsiConsole.MarkupLine("[bold red]Stopping[/] [white]Engine![/]");
+            await Task.Yield();
         }
 
-        // TODO: MOVE THIS!!!
         private static void LogBanner(string text)
         {
             var line = "-------------------------------------------------";

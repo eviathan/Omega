@@ -4,9 +4,19 @@ namespace Omega.Renderer.Text
 {
     public class OmegaTextRenderer : IRenderer
     {
-        public async Task InitialiseAsync()
+        public void Initialise(Action<float> updateProgress = null!)
         {
-            await Task.FromResult(0);
+            updateProgress(1f);
+        }
+
+        public void Draw()
+        {
+           
+        }
+
+        public void Start()
+        {
+            // throw new NotImplementedException();
         }
     }
 }

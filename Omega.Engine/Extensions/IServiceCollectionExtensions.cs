@@ -18,18 +18,12 @@ namespace Omega.Extensions
             services.AddSingleton(options);
             services.AddSingleton(typeof(ISceneManager), options.SceneManagerType);
             services.AddSingleton(typeof(IInputManager), options.InputManagerType);
+
             services.AddSingleton(typeof(IRenderer), options.RendererType);
-            
-            // Hosted Service
-            services.AddHostedService(provider => 
-                provider.GetRequiredService<OmegaEngine>()
-            );
+            services.AddSingleton(options.RendererOptions);
             
             // Service Registrations 
             services.AddSingleton<OmegaEngine>();
-            services.AddSingleton<GameLoop>();
-            services.AddSingleton<IInputManager, InputManager>();
-            services.AddSingleton<ISceneManager, SceneManager>();
 
             return services;
         }

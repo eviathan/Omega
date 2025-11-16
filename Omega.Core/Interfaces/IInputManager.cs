@@ -2,6 +2,10 @@ namespace Omega.Core.Interfaces
 {
     public interface IInputManager
     {
-        Task InitialiseAsync();
+        void Initialise(Action<float> updateProgress = null!);
+
+        void Update();
+
+        public void RegisterKeyEvent(ConsoleKey key, Action action);
     }
 }
